@@ -22,7 +22,7 @@ jobs:
           go install github.com/lc/gau/v2/cmd/gau@latest
       - name: Running Subfinder
         run: |
-           mkdir -p output/$(head -1 targets.txt)
+           mkdir output/$(head -1 targets.txt)
            subfinder -dL targets.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt
             
       - name: Running HTTPX
