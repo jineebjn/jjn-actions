@@ -19,16 +19,16 @@ jobs:
       - name: Installing Subfinder, HTTPX, Nuclei, Nikto, 
         run: |
           sudo apt-get update
-          sudo apt-get install nikto
+          sudo apt-get install nmap
 
-      - name: Running Nikto
+      - name: Running nmap
         run: |
-            cat output/$(head -1 targets.txt) output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt|nikto -h output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-nuclei-out.txt -Format txt
+            nmap -oN output/$(head -1 targets.txt)/$(head -1 targets.txt)-nmap-out.txt -iL output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt
 
       - name: Save domains
         run: |
           git config --local user.email "jineebjn@gmail.com"
-          git config --local user.name "jineebjn"
+          git config --local user.name "jinee"
           git add --all
           git commit -m "Updated"          
       - name: Push changes
