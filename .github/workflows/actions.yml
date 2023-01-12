@@ -20,7 +20,6 @@ jobs:
         run: |
           go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-          go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
           sudo apt-get update
           sudo apt-get install nikto
 
@@ -33,13 +32,9 @@ jobs:
         run: |
           cat output/$(head -1 targets.txt)/subfinder.txt output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt|httpx -silent -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt
       
-      - name: Running Nuclei
-        run: |
-            cat output/$(head -1 targets.txt) output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt|nuclei -list output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-nuclei-out.txt
-
       - name: Running Nikto
         run: |
-            cat output/$(head -1 targets.txt) output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt|nuclei -h output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-nuclei-out.txt
+            cat output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt|nuclei -h output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-nuclei-out.txt
 
       - name: Save domains
         run: |
