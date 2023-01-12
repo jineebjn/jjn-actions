@@ -18,12 +18,23 @@ jobs:
 
       - name: Installing Subfinder, HTTPX, Nuclei, Nikto, 
         run: |
+          go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+          go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
           sudo apt-get update
           sudo apt-get install nmap
-
+          
       - name: Running nmap
         run: |
+            mkdir -p output/$(head -1 targets.txt)
             nmap -oN output/$(head -1 targets.txt)/$(head -1 targets.txt)-nmap-out.txt -iL targets.txt
+            
+      - name: Running Subfinder
+        run: |
+           subfinder -dL targets.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt
+            
+      - name: Running HTTPX
+        run: |
+          cat output/$(head -1 targets.txt)/subfinder.txt output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt|httpx -silent -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt
 
       - name: Save domains
         run: |
