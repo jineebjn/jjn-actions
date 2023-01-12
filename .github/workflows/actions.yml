@@ -34,7 +34,7 @@ jobs:
             
       - name: Running HTTPX
         run: |
-          cat output/$(head -1 targets.txt)/subfinder.txt output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt|httpx -silent -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt
+          cat output/$(head -1 targets.txt)/subfinder.txt output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt|httpx -l targets.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt
 
       - name: Save domains
         run: |
