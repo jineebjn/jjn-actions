@@ -23,12 +23,12 @@ jobs:
 
       - name: Running nmap
         run: |
-            nmap -oN output/$(head -1 targets.txt)/$(head -1 targets.txt)-nmap-out.txt -iL output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt
+            nmap -oN output/$(head -1 targets.txt)/$(head -1 targets.txt)-nmap-out.txt -iL output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt
 
       - name: Save domains
         run: |
           git config --local user.email "jineebjn@gmail.com"
-          git config --local user.name "jinee"
+          git config --local user.name "jineebjn"
           git add --all
           git commit -m "Updated"          
       - name: Push changes
