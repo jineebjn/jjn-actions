@@ -23,7 +23,7 @@ jobs:
 
       - name: Running nmap
         run: |
-            nmap -oN output/$(head -1 targets.txt)/$(head -1 targets.txt)-nmap-out.txt -iL output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt
+            nmap -oN output/$(head -1 targets.txt)/$(head -1 targets.txt)-nmap-out.txt -iL targets.txt
 
       - name: Save domains
         run: |
