@@ -18,23 +18,12 @@ jobs:
 
       - name: Installing Subfinder, HTTPX, Nuclei, Nikto, 
         run: |
-          go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-          go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
           sudo apt-get update
           sudo apt-get install nikto
 
-      - name: Running Subfinder
+      - name: Running Nuclei
         run: |
-           mkdir -p output/$(head -1 targets.txt)
-           subfinder -dL targets.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt
-            
-      - name: Running HTTPX
-        run: |
-          cat output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt|httpx -silent -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt
-      
-      - name: Running Nikto
-        run: |
-            cat output/$(head -1 targets.txt) output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt|nikto -l output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-nuclei-out.txt
+            cat output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt|nuclei -l output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-nuclei-out.html -F html
 
       - name: Save domains
         run: |
