@@ -1,0 +1,9 @@
+# Nmap 7.80 scan initiated Thu Jan 12 03:37:10 2023 as: nmap -oN output/vulnweb.com/vulnweb.com-nmap-out.txt -iL output/vulnweb.com/vulnweb.com-httpx-out.txt
+Unable to split netmask from target expression: "http://www.vulnweb.com"
+Unable to split netmask from target expression: "http://rest.vulnweb.com"
+Unable to split netmask from target expression: "http://testhtml5.vulnweb.com"
+Unable to split netmask from target expression: "http://testasp.vulnweb.com"
+Unable to split netmask from target expression: "http://testphp.vulnweb.com"
+Unable to split netmask from target expression: "http://testaspnet.vulnweb.com"
+WARNING: No targets were specified, so 0 hosts scanned.
+# Nmap done at Thu Jan 12 03:37:10 2023 -- 0 IP addresses (0 hosts up) scanned in 0.03 seconds
