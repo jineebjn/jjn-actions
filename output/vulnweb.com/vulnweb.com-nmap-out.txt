@@ -1,9 +1,0 @@
-# Nmap 7.80 scan initiated Thu Jan 12 03:49:27 2023 as: nmap -oN output/vulnweb.com/vulnweb.com-nmap-out.txt -iL targets.txt
-Nmap scan report for vulnweb.com (44.228.249.3)
-Host is up (0.10s latency).
-rDNS record for 44.228.249.3: ec2-44-228-249-3.us-west-2.compute.amazonaws.com
-Not shown: 999 filtered ports
-PORT   STATE SERVICE
-80/tcp open  http
-
-# Nmap done at Thu Jan 12 03:49:36 2023 -- 1 IP address (1 host up) scanned in 9.38 seconds

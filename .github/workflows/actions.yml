@@ -1,59 +1,58 @@
+name: Recon Workflow
+
 on: [push]
 permissions: write-all
 
 jobs:
-  build:
+  recon:
     runs-on: ubuntu-latest
 
-    # From here we just define all the steps that we have to do.
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master
-        
-      # Install golang
-      - name: Setup golang
+
+      - name: Setup Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.19.5
 
-      - name: Installing Subfinder, HTTPX, Nuclei, Nikto, 
+      - name: Install Tools
         run: |
-          go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-          go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
           sudo apt-get update
-          sudo apt-get install nmap
-          sudo apt-get install nikto
-          go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-          
-      - name: Running nmap
-        run: |
-            mkdir -p output/$(head -1 targets.txt)
-            nmap -oN output/$(head -1 targets.txt)/$(head -1 targets.txt)-nmap-out.txt -iL targets.txt
-            
-      - name: Running Subfinder
-        run: |
-           subfinder -dL targets.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt
-            
-      - name: Running HTTPX
-        run: |
-          cat output/$(head -1 targets.txt)/subfinder.txt output/$(head -1 targets.txt)/$(head -1 targets.txt)-subfinder-out.txt|httpx -l targets.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt
+          sudo apt-get install -y nmap
+          go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+          go install -v github.com/tomnomnom/httprobe@latest
+          echo "$HOME/go/bin" >> $GITHUB_PATH
 
-      - name: Running Nuclei
+      - name: Prepare Target
+        id: prep
         run: |
-            cat output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt|nuclei -list output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-nuclei-out.txt
+          target=$(head -1 targets.txt)
+          echo "target=$target" >> $GITHUB_ENV
+          mkdir -p output/$target
 
-      - name: Running Nikto
+      - name: Run Nmap
         run: |
-            cat output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt|nikto -h output/$(head -1 targets.txt)/$(head -1 targets.txt)-httpx-out.txt -o output/$(head -1 targets.txt)/$(head -1 targets.txt)-nuclei-out.txt -Format txt
+          nmap -p- -sV "$target" -oN output/$target/nmap.txt
 
+      - name: Run Subfinder and Deduplicate
+        run: |
+          subfinder -d "$target" -silent > output/$target/subs.txt
+          sort -u output/$target/subs.txt > output/$target/subs_uniq.txt
 
-      - name: Save domains
+      - name: Run Httprobe on Subdomains
+        run: |
+          cat output/$target/subs_uniq.txt | httprobe > output/$target/live.txt
+
+      - name: Commit and Push Results
         run: |
           git config --local user.email "jineebjn@gmail.com"
           git config --local user.name "jineebjn"
-          git add --all
-          git commit -m "Updated"          
-      - name: Push changes
+          git add output/
+          git commit -m "Automated recon result for $target" || echo "Nothing to commit"
+        continue-on-error: true
+
+      - name: Push to Repo
         uses: ad-m/github-push-action@master
         with:
-          github_token: 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
+          github_token: ${{ secrets.GH_TOKEN }}
