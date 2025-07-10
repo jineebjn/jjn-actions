@@ -1,7 +1,7 @@
 name: Recon Workflow
 
 on: [push]
-permissions: write-all
+permissions: write
 
 jobs:
   recon:
@@ -33,7 +33,7 @@ jobs:
 
       - name: Run Nmap
         run: |
-          nmap -p- -sV "$target" -oN output/$target/nmap.txt
+          nmap -p- -sV "$target" -v -oN output/$target/nmap.txt
 
       - name: Run Subfinder and Deduplicate
         run: |
@@ -55,4 +55,4 @@ jobs:
       - name: Push to Repo
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.GH_TOKEN }}
+          github_token: ${{ secrets.MY_PAT }}
