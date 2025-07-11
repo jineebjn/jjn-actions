@@ -1,6 +1,10 @@
 name: Recon Workflow
 
-on: [push]
+on:
+  push:
+    paths:
+      - 'targets.txt'  # Only run when this file changes
+
 permissions: write-all
 
 jobs:
