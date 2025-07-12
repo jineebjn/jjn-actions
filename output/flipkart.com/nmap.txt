@@ -1,0 +1,75 @@
+# Nmap 7.94SVN scan initiated Sat Jul 12 07:23:10 2025 as: nmap -p- -sV -v -oN output/flipkart.com/nmap.txt flipkart.com
+Nmap scan report for flipkart.com (163.53.76.86)
+Host is up (0.22s latency).
+Not shown: 65533 filtered tcp ports (no-response)
+PORT    STATE SERVICE   VERSION
+80/tcp  open  http      nginx
+443/tcp open  ssl/https
+2 services unrecognized despite returning data. If you know the service/version, please submit the following fingerprints at https://nmap.org/cgi-bin/submit.cgi?new-service :
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port80-TCP:V=7.94SVN%I=7%D=7/12%Time=68720E32%P=x86_64-pc-linux-gnu%r(G
+SF:etRequest,E9,"HTTP/1\.1\x20503\x20Service\x20Unavailable\r\ncontent-len
+SF:gth:\x20107\r\ncache-control:\x20no-cache\r\ncontent-type:\x20text/html
+SF:\r\nconnection:\x20close\r\n\r\n<html><body><h1>503\x20Service\x20Unava
+SF:ilable</h1>\nNo\x20server\x20is\x20available\x20to\x20handle\x20this\x2
+SF:0request\.\n</body></html>\n")%r(HTTPOptions,E9,"HTTP/1\.1\x20503\x20Se
+SF:rvice\x20Unavailable\r\ncontent-length:\x20107\r\ncache-control:\x20no-
+SF:cache\r\ncontent-type:\x20text/html\r\nconnection:\x20close\r\n\r\n<htm
+SF:l><body><h1>503\x20Service\x20Unavailable</h1>\nNo\x20server\x20is\x20a
+SF:vailable\x20to\x20handle\x20this\x20request\.\n</body></html>\n")%r(RTS
+SF:PRequest,CF,"HTTP/1\.1\x20400\x20Bad\x20request\r\nContent-length:\x209
+SF:0\r\nCache-Control:\x20no-cache\r\nConnection:\x20close\r\nContent-Type
+SF::\x20text/html\r\n\r\n<html><body><h1>400\x20Bad\x20request</h1>\nYour\
+SF:x20browser\x20sent\x20an\x20invalid\x20request\.\n</body></html>\n")%r(
+SF:X11Probe,CF,"HTTP/1\.1\x20400\x20Bad\x20request\r\nContent-length:\x209
+SF:0\r\nCache-Control:\x20no-cache\r\nConnection:\x20close\r\nContent-Type
+SF::\x20text/html\r\n\r\n<html><body><h1>400\x20Bad\x20request</h1>\nYour\
+SF:x20browser\x20sent\x20an\x20invalid\x20request\.\n</body></html>\n")%r(
+SF:FourOhFourRequest,E9,"HTTP/1\.1\x20503\x20Service\x20Unavailable\r\ncon
+SF:tent-length:\x20107\r\ncache-control:\x20no-cache\r\ncontent-type:\x20t
+SF:ext/html\r\nconnection:\x20close\r\n\r\n<html><body><h1>503\x20Service\
+SF:x20Unavailable</h1>\nNo\x20server\x20is\x20available\x20to\x20handle\x2
+SF:0this\x20request\.\n</body></html>\n")%r(RPCCheck,CF,"HTTP/1\.1\x20400\
+SF:x20Bad\x20request\r\nContent-length:\x2090\r\nCache-Control:\x20no-cach
+SF:e\r\nConnection:\x20close\r\nContent-Type:\x20text/html\r\n\r\n<html><b
+SF:ody><h1>400\x20Bad\x20request</h1>\nYour\x20browser\x20sent\x20an\x20in
+SF:valid\x20request\.\n</body></html>\n")%r(DNSVersionBindReqTCP,CF,"HTTP/
+SF:1\.1\x20400\x20Bad\x20request\r\nContent-length:\x2090\r\nCache-Control
+SF::\x20no-cache\r\nConnection:\x20close\r\nContent-Type:\x20text/html\r\n
+SF:\r\n<html><body><h1>400\x20Bad\x20request</h1>\nYour\x20browser\x20sent
+SF:\x20an\x20invalid\x20request\.\n</body></html>\n");
+==============NEXT SERVICE FINGERPRINT (SUBMIT INDIVIDUALLY)==============
+SF-Port443-TCP:V=7.94SVN%T=SSL%I=7%D=7/12%Time=68720E3E%P=x86_64-pc-linux-
+SF:gnu%r(HTTPOptions,E9,"HTTP/1\.1\x20503\x20Service\x20Unavailable\r\ncon
+SF:tent-length:\x20107\r\ncache-control:\x20no-cache\r\ncontent-type:\x20t
+SF:ext/html\r\nconnection:\x20close\r\n\r\n<html><body><h1>503\x20Service\
+SF:x20Unavailable</h1>\nNo\x20server\x20is\x20available\x20to\x20handle\x2
+SF:0this\x20request\.\n</body></html>\n")%r(tor-versions,CF,"HTTP/1\.1\x20
+SF:400\x20Bad\x20request\r\nContent-length:\x2090\r\nCache-Control:\x20no-
+SF:cache\r\nConnection:\x20close\r\nContent-Type:\x20text/html\r\n\r\n<htm
+SF:l><body><h1>400\x20Bad\x20request</h1>\nYour\x20browser\x20sent\x20an\x
+SF:20invalid\x20request\.\n</body></html>\n")%r(RTSPRequest,CF,"HTTP/1\.1\
+SF:x20400\x20Bad\x20request\r\nContent-length:\x2090\r\nCache-Control:\x20
+SF:no-cache\r\nConnection:\x20close\r\nContent-Type:\x20text/html\r\n\r\n<
+SF:html><body><h1>400\x20Bad\x20request</h1>\nYour\x20browser\x20sent\x20a
+SF:n\x20invalid\x20request\.\n</body></html>\n")%r(RPCCheck,CF,"HTTP/1\.1\
+SF:x20400\x20Bad\x20request\r\nContent-length:\x2090\r\nCache-Control:\x20
+SF:no-cache\r\nConnection:\x20close\r\nContent-Type:\x20text/html\r\n\r\n<
+SF:html><body><h1>400\x20Bad\x20request</h1>\nYour\x20browser\x20sent\x20a
+SF:n\x20invalid\x20request\.\n</body></html>\n")%r(DNSVersionBindReqTCP,CF
+SF:,"HTTP/1\.1\x20400\x20Bad\x20request\r\nContent-length:\x2090\r\nCache-
+SF:Control:\x20no-cache\r\nConnection:\x20close\r\nContent-Type:\x20text/h
+SF:tml\r\n\r\n<html><body><h1>400\x20Bad\x20request</h1>\nYour\x20browser\
+SF:x20sent\x20an\x20invalid\x20request\.\n</body></html>\n")%r(DNSStatusRe
+SF:questTCP,CF,"HTTP/1\.1\x20400\x20Bad\x20request\r\nContent-length:\x209
+SF:0\r\nCache-Control:\x20no-cache\r\nConnection:\x20close\r\nContent-Type
+SF::\x20text/html\r\n\r\n<html><body><h1>400\x20Bad\x20request</h1>\nYour\
+SF:x20browser\x20sent\x20an\x20invalid\x20request\.\n</body></html>\n")%r(
+SF:Help,CF,"HTTP/1\.1\x20400\x20Bad\x20request\r\nContent-length:\x2090\r\
+SF:nCache-Control:\x20no-cache\r\nConnection:\x20close\r\nContent-Type:\x2
+SF:0text/html\r\n\r\n<html><body><h1>400\x20Bad\x20request</h1>\nYour\x20b
+SF:rowser\x20sent\x20an\x20invalid\x20request\.\n</body></html>\n");
+
+Read data files from: /usr/bin/../share/nmap
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Jul 12 07:27:59 2025 -- 1 IP address (1 host up) scanned in 289.23 seconds
