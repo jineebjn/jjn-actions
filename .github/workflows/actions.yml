@@ -35,9 +35,9 @@ jobs:
           echo "target=$target" >> $GITHUB_ENV
           mkdir -p output/$target
 
-      - name: Run Nmap
-        run: |
-          nmap -p- -sS -sV "$target" -v -oN output/$target/nmap.txt
+      # - name: Run Nmap
+      #   run: |
+      #     nmap -p- -sS -sV "$target" -v -oN output/$target/nmap.txt
 
       - name: Run Subfinder and Deduplicate
         run: |
