@@ -23,6 +23,7 @@ jobs:
       - name: Install Tools
         run: |
           sudo apt-get update
+          sudo apt-get install python3
           # sudo apt-get install -y nmap
           go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           go install -v github.com/tomnomnom/httprobe@latest
@@ -47,6 +48,10 @@ jobs:
       - name: Run Httprobe on Subdomains
         run: |
           cat output/$target/subs_uniq.txt | httprobe > output/$target/live.txt
+
+      - name: Run subdomain takeover
+        run: |
+          python3 takeover.py -l output/$target/subs_uniq.txt -v -o output/$target/takeover.txt
 
       - name: Commit and Push Results
         run: |
