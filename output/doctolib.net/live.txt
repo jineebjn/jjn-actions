@@ -1,0 +1,14 @@
+http://backstage.doctolib.net
+http://joulica-staging.doctolib.net
+http://mindflow.doctolib.net
+https://backstage.doctolib.net
+http://share.doctolib.net
+http://tfe-github-staging.doctolib.net
+https://joulica-staging.doctolib.net
+http://tfe-github.doctolib.net
+https://mindflow.doctolib.net
+https://share.doctolib.net
+https://tfe-github.doctolib.net
+https://tfe-github-staging.doctolib.net
+http://totalreward.doctolib.net
+https://totalreward.doctolib.net
