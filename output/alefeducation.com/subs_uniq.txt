@@ -1,0 +1,13 @@
+events.alefeducation.com
+ideas.alefeducation.com
+info.alefeducation.com
+legalhub.alefeducation.com
+marketplace.alefeducation.com
+patch.alefeducation.com
+policy.alefeducation.com
+uat.alefeducation.com
+vdp.alefeducation.com
+voice.alefeducation.com
+www.alefeducation.com
+www.patch.alefeducation.com
+www.policy.alefeducation.com
