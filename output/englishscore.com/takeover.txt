@@ -1,0 +1,22 @@
+----------------------------------------
+Domain	: api2-staging.englishscore.com
+Service	: Fly.io
+Error	: 404 Not Found
+========================================
+Domain	: api2.englishscore.com
+Service	: Fly.io
+Error	: 404 Not Found
+========================================
+Domain	: email.mg.englishscore.com
+Service	: Strikingly
+Error	: page not found
+========================================
+Domain	: resources.englishscore.com
+Service	: Strikingly
+Error	: page not found
+========================================
+Domain	: tutors.englishscore.com
+Service	: Strikingly
+Error	: page not found
+========================================
+----------------------------------------
