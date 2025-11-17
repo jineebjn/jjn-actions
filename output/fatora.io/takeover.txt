@@ -1,0 +1,7 @@
+----------------------------------------
+Domain	: api2.fatora.io
+Service	: Acquia
+Error	: The site you are looking for could not be found.|If you are an Acquia Cloud \
+customer and expect to see your site at this address|Web Site Not Found
+========================================
+----------------------------------------

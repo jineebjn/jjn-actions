@@ -1,0 +1,14 @@
+http://blockchain.fatora.io
+http://app.fatora.io
+http://api2.fatora.io
+http://app-service.fatora.io
+http://api.fatora.io
+https://blockchain.fatora.io
+http://blog.fatora.io
+http://api-service.fatora.io
+https://api.fatora.io
+https://app.fatora.io
+https://app-service.fatora.io
+https://api2.fatora.io
+http://www.fatora.io
+https://api-service.fatora.io
