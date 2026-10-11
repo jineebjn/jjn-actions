@@ -26,15 +26,25 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.22'
+          cache: false
+
+      - name: Add Go bin to PATH
+        run: echo "$HOME/go/bin" >> "$GITHUB_PATH"
+
+      - name: Cache recon tools
+        id: tools-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin
+          # Bump the vN suffix to force a rebuild and pull newer tool versions.
+          key: recon-tools-v1-${{ runner.os }}
 
       - name: Install Tools
+        if: steps.tools-cache.outputs.cache-hit != 'true'
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3
-          # sudo apt-get install -y nmap
+          # python3 is preinstalled on ubuntu-latest, so nothing to apt-get here.
           go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH
 
       - name: Prepare and validate target
         run: |
@@ -60,14 +70,58 @@ jobs:
 
       - name: Probe live hosts (httpx)
         run: |
-          # JSON lines so the viewer gets real status codes and titles.
-          # The viewer still renders older plain-URL live.txt files too.
-          httpx -silent -json -l "output/$target/subs_uniq.txt" \
+          # JSON lines with real status, title, tech, IP, CDN and redirect.
+          # These are read from the requests httpx already makes (no extra probes),
+          # so this stays light on Action minutes. The viewer also renders older
+          # plain-URL live.txt files.
+          httpx -silent -json \
+            -status-code -title -tech-detect -ip -cname -cdn -location -content-length \
+            -l "output/$target/subs_uniq.txt" \
             > "output/$target/live.txt" || true
 
       - name: Run subdomain takeover
         run: |
           python3 takeover.py -l "output/$target/subs_uniq.txt" -v -o "output/$target/takeover.txt"
+
+      - name: Write metadata and snapshot
+        run: |
+          dir="output/$target"
+          ts=$(date -u +%Y-%m-%dT%H-%M-%SZ)
+
+          count() { if [ -f "$1" ]; then grep -c '' "$1" || true; else echo 0; fi; }
+          subs=$(count "$dir/subs_uniq.txt")
+          live=$(count "$dir/live.txt")
+          if [ -f "$dir/takeover.txt" ]; then
+            takeover=$(grep -c '^Domain' "$dir/takeover.txt" || true)
+          else
+            takeover=0
+          fi
+
+          jq -n --arg d "$target" --argjson s "${subs:-0}" --argjson l "${live:-0}" --argjson t "${takeover:-0}" \
+            '{domain:$d, subs:$s, live:$l, takeover:$t}' > "$dir/summary.json"
+          jq -n --arg d "$target" --arg ts "$ts" \
+            '{domain:$d, scanned_at:$ts, tools:{subfinder:"latest", httpx:"latest", takeover:"takeover.py"}}' \
+            > "$dir/meta.json"
+
+          # Timestamped snapshot for history and diffing.
+          snap="$dir/history/$ts"
+          mkdir -p "$snap"
+          cp "$dir"/subs.txt "$dir"/subs_uniq.txt "$dir"/live.txt "$dir"/takeover.txt \
+             "$dir"/summary.json "$dir"/meta.json "$snap"/ 2>/dev/null || true
+
+          # Maintain history.json (newest first), keeping the 10 most recent.
+          hist="$dir/history.json"
+          if [ -f "$hist" ]; then
+            jq -c --arg ts "$ts" '([$ts] + .) | unique | reverse | .[0:10]' "$hist" > "$hist.tmp"
+          else
+            jq -cn --arg ts "$ts" '[$ts]' > "$hist.tmp"
+          fi
+          mv "$hist.tmp" "$hist"
+
+          # Prune snapshot directories beyond the 10 most recent.
+          ls -1d "$dir"/history/*/ 2>/dev/null | sort | head -n -10 | while read -r old; do
+            rm -rf "$old"
+          done
 
       - name: Commit Results
         run: |
