@@ -44,6 +44,7 @@ jobs:
         run: |
           # python3 is preinstalled on ubuntu-latest, so nothing to apt-get here.
           go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+          go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest
           go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
 
       - name: Prepare and validate target
@@ -65,18 +66,27 @@ jobs:
 
       - name: Run Subfinder and Deduplicate
         run: |
-          subfinder -d "$target" -silent > "output/$target/subs.txt"
+          # -all uses every passive source that needs no API key for more coverage.
+          subfinder -d "$target" -all -silent > "output/$target/subs.txt"
           sort -u "output/$target/subs.txt" > "output/$target/subs_uniq.txt"
+
+      - name: Resolve DNS (dnsx)
+        run: |
+          # Keep only names that actually resolve; this trims dead hosts before
+          # httpx, so probing does less work (lighter on Action minutes).
+          dnsx -silent -l "output/$target/subs_uniq.txt" > "output/$target/resolved.txt" || true
 
       - name: Probe live hosts (httpx)
         run: |
-          # JSON lines with real status, title, tech, IP, CDN and redirect.
-          # These are read from the requests httpx already makes (no extra probes),
-          # so this stays light on Action minutes. The viewer also renders older
-          # plain-URL live.txt files.
+          # JSON lines with real status, title, tech, IP, CDN, ASN and redirect.
+          # Fields are read from requests httpx already makes (no extra probes).
+          # Falls back to the full list if resolution produced nothing.
+          input="output/$target/resolved.txt"
+          [ -s "$input" ] || input="output/$target/subs_uniq.txt"
           httpx -silent -json \
-            -status-code -title -tech-detect -ip -cname -cdn -location -content-length \
-            -l "output/$target/subs_uniq.txt" \
+            -status-code -title -tech-detect -ip -cname -cdn -asn -location -content-length \
+            -rl 150 -retries 2 \
+            -l "$input" \
             > "output/$target/live.txt" || true
 
       - name: Run subdomain takeover
@@ -100,13 +110,13 @@ jobs:
           jq -n --arg d "$target" --argjson s "${subs:-0}" --argjson l "${live:-0}" --argjson t "${takeover:-0}" \
             '{domain:$d, subs:$s, live:$l, takeover:$t}' > "$dir/summary.json"
           jq -n --arg d "$target" --arg ts "$ts" \
-            '{domain:$d, scanned_at:$ts, tools:{subfinder:"latest", httpx:"latest", takeover:"takeover.py"}}' \
+            '{domain:$d, scanned_at:$ts, tools:{subfinder:"latest", dnsx:"latest", httpx:"latest", takeover:"takeover.py"}}' \
             > "$dir/meta.json"
 
           # Timestamped snapshot for history and diffing.
           snap="$dir/history/$ts"
           mkdir -p "$snap"
-          cp "$dir"/subs.txt "$dir"/subs_uniq.txt "$dir"/live.txt "$dir"/takeover.txt \
+          cp "$dir"/subs.txt "$dir"/subs_uniq.txt "$dir"/resolved.txt "$dir"/live.txt "$dir"/takeover.txt \
              "$dir"/summary.json "$dir"/meta.json "$snap"/ 2>/dev/null || true
 
           # Maintain history.json (newest first), keeping the 10 most recent.
