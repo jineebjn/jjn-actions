@@ -5,7 +5,14 @@ on:
     paths:
       - 'targets.txt'  # Only run when this file changes
 
-permissions: write-all
+# Least privilege for the built-in token (the push below uses MY_PAT, unaffected).
+permissions:
+  contents: write
+
+# Serialize runs so queued scans don't race each other on git push.
+concurrency:
+  group: recon
+  cancel-in-progress: false
 
 jobs:
   recon:
@@ -13,28 +20,34 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
 
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.22
+          go-version: '1.22'
 
       - name: Install Tools
         run: |
           sudo apt-get update
-          sudo apt-get install python3
+          sudo apt-get install -y python3
           # sudo apt-get install -y nmap
           go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
           go install -v github.com/tomnomnom/httprobe@latest
           echo "$HOME/go/bin" >> $GITHUB_PATH
 
-      - name: Prepare Target
-        id: prep
+      - name: Prepare and validate target
         run: |
-          target=$(head -1 targets.txt)
-          echo "target=$target" >> $GITHUB_ENV
-          mkdir -p output/$target
+          # Strip surrounding whitespace / stray CR (targets.txt may be CRLF).
+          target=$(head -1 targets.txt | tr -d '[:space:]')
+          # Reject anything that is not a plain domain name. This value is used
+          # in shell commands and file paths, so validation prevents injection.
+          if ! printf '%s' "$target" | grep -qE '^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+(xn--[a-zA-Z0-9-]+|[a-zA-Z]{2,})$'; then
+            echo "::error::Invalid target domain: '$target'"
+            exit 1
+          fi
+          echo "target=$target" >> "$GITHUB_ENV"
+          mkdir -p "output/$target"
 
       # - name: Run Nmap
       #   run: |
@@ -42,18 +55,18 @@ jobs:
 
       - name: Run Subfinder and Deduplicate
         run: |
-          subfinder -d "$target" -silent > output/$target/subs.txt
-          sort -u output/$target/subs.txt > output/$target/subs_uniq.txt
+          subfinder -d "$target" -silent > "output/$target/subs.txt"
+          sort -u "output/$target/subs.txt" > "output/$target/subs_uniq.txt"
 
       - name: Run Httprobe on Subdomains
         run: |
-          cat output/$target/subs_uniq.txt | httprobe > output/$target/live.txt
+          httprobe < "output/$target/subs_uniq.txt" > "output/$target/live.txt"
 
       - name: Run subdomain takeover
         run: |
-          python3 takeover.py -l output/$target/subs_uniq.txt -v -o output/$target/takeover.txt
+          python3 takeover.py -l "output/$target/subs_uniq.txt" -v -o "output/$target/takeover.txt"
 
-      - name: Commit and Push Results
+      - name: Commit Results
         run: |
           git config --local user.email "jineebjn@gmail.com"
           git config --local user.name "jineebjn"
@@ -62,6 +75,7 @@ jobs:
         continue-on-error: true
 
       - name: Push to Repo
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@v0.8.0
         with:
           github_token: ${{ secrets.MY_PAT }}
+          branch: main
