@@ -33,7 +33,7 @@ jobs:
           sudo apt-get install -y python3
           # sudo apt-get install -y nmap
           go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-          go install -v github.com/tomnomnom/httprobe@latest
+          go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
           echo "$HOME/go/bin" >> $GITHUB_PATH
 
       - name: Prepare and validate target
@@ -58,9 +58,12 @@ jobs:
           subfinder -d "$target" -silent > "output/$target/subs.txt"
           sort -u "output/$target/subs.txt" > "output/$target/subs_uniq.txt"
 
-      - name: Run Httprobe on Subdomains
+      - name: Probe live hosts (httpx)
         run: |
-          httprobe < "output/$target/subs_uniq.txt" > "output/$target/live.txt"
+          # JSON lines so the viewer gets real status codes and titles.
+          # The viewer still renders older plain-URL live.txt files too.
+          httpx -silent -json -l "output/$target/subs_uniq.txt" \
+            > "output/$target/live.txt" || true
 
       - name: Run subdomain takeover
         run: |
